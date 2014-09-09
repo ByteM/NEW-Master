@@ -57,9 +57,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ADD_Tax.xaml.cs">
+      <DependentUpon>ADD_Tax.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DateDiff.cs" />
+    <Compile Include="DateDifference.cs" />
     <Compile Include="StockProducts.xaml.cs">
       <DependentUpon>StockProducts.xaml</DependentUpon>
     </Compile>
+    <Page Include="ADD_Tax.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="frmAddProducts.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -204,6 +213,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Search.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DurationCalculatorApp.csproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
