@@ -30,7 +30,7 @@ namespace CRM_DAL
                 cmd.Parameters.AddWithValue("@EndDate", bcreatecamp.EndDate);
                 cmd.Parameters.AddWithValue("@ExpectedRevenue", bcreatecamp.ExpectedRevenue);
                 cmd.Parameters.AddWithValue("@BudgetedCost", bcreatecamp.BudgetedCost);
-                cmd.Parameters.AddWithValue("@ActualCost", bcreatecamp.ActualCost);
+                cmd.Parameters.AddWithValue("@Status", bcreatecamp.Status);
                 cmd.Parameters.AddWithValue("@ExpectedResponse", bcreatecamp.ExpectedResponse);
                 cmd.Parameters.AddWithValue("@Description", bcreatecamp.Description);
                 cmd.Parameters.AddWithValue("@S_Status", bcreatecamp.S_Status);

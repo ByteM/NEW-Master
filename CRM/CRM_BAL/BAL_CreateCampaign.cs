@@ -23,9 +23,9 @@ namespace CRM_BAL
 
         public double BudgetedCost { get; set; }
 
-        public double ActualCost { get; set; }
+        public string Status { get; set; }
 
-        public double ExpectedResponse { get; set; }
+        public string ExpectedResponse { get; set; }
 
         public string Description { get; set; }
 

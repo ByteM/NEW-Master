@@ -21,6 +21,7 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
+using CRM_User_Interface;
 using CRM_BAL;
 using CRM_DAL;
 
@@ -111,6 +112,7 @@ namespace CRM_User_Interface
         DAL_FinalDealer dfinaldealer = new DAL_FinalDealer();
         DAL_FinalDealerUpdate dFup = new DAL_FinalDealerUpdate();
 
+
         //BAL_Pre_Procurement bpreproc = new BAL_Pre_Procurement();
         //DAL_Pre_Procurement dpreproc = new DAL_Pre_Procurement();
 
@@ -134,6 +136,10 @@ namespace CRM_User_Interface
 
         BAL_Warranty balw = new BAL_Warranty();
         DAL_Warranty dalw = new DAL_Warranty();
+
+        BAL_CreateCampaign bcrcamp = new BAL_CreateCampaign();
+        DAL_CreateCampaign dcrcamp = new DAL_CreateCampaign();
+
 
         #region Load Event
         public frmCRM_Adm_Dashbord()
@@ -922,9 +928,7 @@ namespace CRM_User_Interface
         {
             grdAdm_EmployeeEntry.Visibility = System.Windows.Visibility.Visible;
         }
-        #endregion Employee Event
-
-     
+        #endregion Employee Event    
 
         private void btnAdm_EmployeeExit_Click(object sender, RoutedEventArgs e)
         {
@@ -5205,14 +5209,12 @@ namespace CRM_User_Interface
             
         }
 
-
         private void btnSaleProductsFetch_Click(object sender, RoutedEventArgs e)
         {
             StockProducts sp = new StockProducts();
             sp.Show();
         }
-
-
+        
         public void FollowUp_FillData()
         {
             try
@@ -5326,7 +5328,6 @@ namespace CRM_User_Interface
 
 
         }
-
         
         #region FollowupComments Function
         public void ViewAllComments_Details()
@@ -5656,6 +5657,13 @@ namespace CRM_User_Interface
         {
             grd_LeadInformation.Visibility = System.Windows.Visibility.Hidden;
         }
+
+
+        #region Campaign Function
+
+
+        #region Campaign Function
+
 
         private void txtInvoice_Qty_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -6403,5 +6411,304 @@ namespace CRM_User_Interface
         {
             GRDInvoice_Cheque.Visibility = Visibility.Hidden;
         }
-  }
+  
+
+
+
+
+    
+
+        #region Camp Function
+        public bool Campaign_Validation()
+        {
+            bool result = false;
+            if(txtCampaginName.Text == "")
+            {
+                result = true;
+
+                frmValidationMessage obj = new frmValidationMessage()
+                obj.lblMessage.Content = "Please Select Campanign Name";
+
+                frmValidationMessage obj = new frmValidationMessage();
+                obj.lblMessage.Content = "Please Enter Campanign Name";
+                obj.ShowDialog();
+                txtCampaginName.BorderBrush = Brushes.Red;
+            }
+            else if (cmbCampaignType.Text == "-None-")
+            {
+                result = true;
+                frmValidationMessage obj = new frmValidationMessage();
+                obj.lblMessage.Content = "Please Select Campanign Type";
+                obj.ShowDialog();
+                cmbCampaignType.BorderBrush = Brushes.Red;
+            }
+            else if (dp_CompStartDate.Text == "")
+            {
+                result = true;
+                frmValidationMessage obj = new frmValidationMessage();
+                obj.lblMessage.Content = "Please Select Start Date";
+                obj.ShowDialog();
+            }
+            else if (dp_CompEndDate.Text == "")
+            {
+                result = true;
+                frmValidationMessage obj = new frmValidationMessage();
+                obj.lblMessage.Content = "Please Select End Date";
+                obj.ShowDialog();
+            }
+            else if (txtCampExpectedRevenue.Text == "")
+            {
+                result = true;
+                frmValidationMessage obj = new frmValidationMessage();
+                obj.lblMessage.Content = "Please Enter Expected Revenue";
+                obj.ShowDialog();
+                txtCampExpectedRevenue.BorderBrush = Brushes.Red;
+            }
+            return result;
+        }
+
+        public void Camp_ResetText()
+        {
+            txtCampaginName.Text = "";
+            cmbCampaignType.Text = "-None-";
+            txtCampExpectedRevenue.Text = "";
+            txtCampExpectedResponse.Text = "";
+            txtCampBudgetedCost.Text = "";
+            cmbCampaignStatus.Text = "-None-";
+            txtCampDescription.Text = "";
+            dp_CompStartDate.Text = "";
+            dp_CompEndDate.Text = "";
+        }
+
+        #region Camp Button Event
+        private void btnCamp_Save_Click(object sender, RoutedEventArgs e)
+        {
+            if (Campaign_Validation() == true)
+                return;
+
+            try
+            {
+                bcrcamp.Flag = 1;
+                bcrcamp.CampaignName = txtCampaginName.Text;
+                bcrcamp.CampaignType = cmbCampaignType.Text;
+                bcrcamp.StartDate = dp_CompStartDate.Text;
+                bcrcamp.EndDate = dp_CompEndDate.Text;
+                bcrcamp.ExpectedRevenue = Convert.ToDouble(txtCampExpectedRevenue.Text);
+                bcrcamp.BudgetedCost = Convert.ToDouble(txtCampBudgetedCost.Text);
+                bcrcamp.Status = cmbCampaignStatus.Text;
+                bcrcamp.ExpectedResponse = txtCampExpectedResponse.Text;
+                bcrcamp.Description = txtCampDescription.Text;
+                bcrcamp.S_Status = "Active";
+                bcrcamp.C_Date = System.DateTime.Now.ToString();
+                dcrcamp.CreateCampaign_Insert_Update_Delete(bcrcamp);
+                //MessageBox.Show("Customer Added sucsessfully ", caption, MessageBoxButton.OK);
+                frmValidationMessage obj = new frmValidationMessage();
+                obj.lblMessage.Content = "Data Save Successfully";
+                obj.ShowDialog();
+                Camp_ResetText();
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+
+        private void btnfCamp_Clear_Click(object sender, RoutedEventArgs e)
+        {
+            Camp_ResetText();
+        }
+
+        private void btnCamp_Exit_Click(object sender, RoutedEventArgs e)
+        {
+            grdCreateCampaign.Visibility = System.Windows.Visibility.Hidden;
+        }
+
+        private void btnCampExpendedRevenueCalc_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process P = System.Diagnostics.Process.Start("Calc.exe");
+            P.WaitForInputIdle();
+        }
+
+        private void btnCampActualCostCalc_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process P = System.Diagnostics.Process.Start("Calc.exe");
+            P.WaitForInputIdle();
+        }
+
+        private void btnCampBudgCalc_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process P = System.Diagnostics.Process.Start("Calc.exe");
+            P.WaitForInputIdle();
+        }
+
+        private void btn_View_Campaign_Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            dtpTo_Campain.Text = "";
+            dtpFrom_Campain.Text = "";
+            txtSearch_CampaignName.Text = "";
+            Campaigns_Details();
+        }
+
+        private void btn_View_Campaign_Exit_Click(object sender, RoutedEventArgs e)
+        {
+            grd_View_Campaign.Visibility = System.Windows.Visibility.Hidden;
+        }
+        #endregion Camp Button Event
+
+        private void grdCreateCampaign_Loaded(object sender, RoutedEventArgs e)
+        {
+            //Load_Campaign();
+        }
+        
+        public void Campaigns_Details()
+        {
+            try
+            {
+                String str;
+                //con.Open();
+                DataSet ds = new DataSet();
+                str = "SELECT [ID],[CampaignName],[CampaignType],[StartDate],[EndDate],[ExpectedRevenue],[BudgetedCost],[Status],[ExpectedResponse],[Description] " +
+                      "FROM [tlb_FollowUpCampaign] " +
+                      "WHERE ";
+                if ((dtpFrom_Campain.SelectedDate != null) && (dtpTo_Campain.SelectedDate != null))
+                {
+                    DateTime StartDate = Convert.ToDateTime(dtpFrom_Campain.Text.Trim() + " 00:00:00.000");
+                    DateTime EndDate = Convert.ToDateTime(dtpTo_Campain.Text.Trim() + " 23:59:59.999");
+                    str = str + "[StartDate] Between '" + StartDate + "' AND '" + EndDate + "'  AND ";
+                }
+
+                if (txtSearch_CampaignName.Text.Trim() != "")
+                {
+                    str = str + "[CampaignName] LIKE ISNULL('" + txtSearch_CampaignName.Text.Trim() + "',[CampaignName]) + '%' AND ";
+                }
+
+                str = str + " [S_Status] = 'Active' ORDER BY [CampaignName] ASC ";
+                SqlCommand cmd = new SqlCommand(str, con);
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                da.Fill(ds);
+
+                //if (ds.Tables[0].Rows.Count > 0)
+                //{
+                dgvCampaginsDetails.ItemsSource = ds.Tables[0].DefaultView;
+                //}
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+       
+
+        #region Camp Event
+        private void grd_View_Campaign_Loaded(object sender, RoutedEventArgs e)
+        {
+            Campaigns_Details();
+            dgvCampaginsDetails.CanUserAddRows = false;
+        }
+
+        private void dtpFrom_Campain_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Campaigns_Details();
+        }
+
+        private void dtpTo_Campain_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Campaigns_Details();
+        }
+
+        private void txtSearch_CampaignName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Campaigns_Details();
+        }
+
+        private void menu_CompaignsEntry_Click(object sender, RoutedEventArgs e)
+        {
+            grdCreateCampaign.Visibility = System.Windows.Visibility.Visible;
+        }
+
+        private void menu_CompaignsDetails_Click(object sender, RoutedEventArgs e)
+        {
+            grd_View_Campaign.Visibility = System.Windows.Visibility.Visible;
+            Campaigns_Details();
+        }
+        #endregion Camp Event
+
+        private void btndgv_Campaigns_Remove_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btndgv_Campaigns_Edit_Click(object sender, RoutedEventArgs e)
+        {
+            grdCreateCampaign.Visibility = System.Windows.Visibility.Visible;
+        }
+       
+
+        //public void Campaign_FillData()
+        //{
+        //    try
+        //    {
+        //        con.Open();
+        //        string sqlquery = "SELECT [ID],[CampaignName],[CampaignType],[StartDate],[EndDate],[ExpectedRevenue],[BudgetedCost] " +
+        //                          ",F.[Mobile_No],F.[Phone_No],F.[SourceOfEnquiry],F.[Occupation],F.[AnnualRevenue],F.[Email_ID],F.[FaxNo],F.[Wbsite],F.[Street],F.[City],F.[State],F.[ZipNo],F.[Country],F.[Description],F.[F_Date] " +
+        //                          ",E.[EmployeeFirstName] + ' ' + E.[EmployeeLastName] AS [EmployeeName] " +
+        //                          "FROM [tlb_FollowUp] F " +
+        //                          "INNER JOIN [tbl_Employee] E ON E.[ID]=F.[EmployeeID] " +
+        //                          "where F.[ID]='" + txtFollowupID.Text + "' ";
+        //        SqlCommand cmd = new SqlCommand(sqlquery, con);
+        //        SqlDataAdapter adp = new SqlDataAdapter(cmd);
+        //        DataTable dt = new DataTable();
+        //        adp.Fill(dt);
+        //        if (dt.Rows.Count > 0)
+        //        {
+        //            //leadinformation
+        //            txtFollowupViewID.Text = dt.Rows[0]["ID"].ToString();
+        //            lblFollow_upName.Content = dt.Rows[0]["FollowupName"].ToString();
+        //            lblLeadOwnerName.Content = dt.Rows[0]["EmployeeName"].ToString();
+        //            lblLeadOwnerPhNo.Content = dt.Rows[0]["Phone_No"].ToString();
+        //            lblLeadOwnerMbNo.Content = dt.Rows[0]["Mobile_No"].ToString();
+        //            lblFLeadName.Content = dt.Rows[0]["FollowupName"].ToString();
+        //            lblFLeadOwner.Content = dt.Rows[0]["EmployeeName"].ToString();
+        //            lblFPhoneNo.Content = dt.Rows[0]["Phone_No"].ToString();
+        //            lblFMobileNo.Content = dt.Rows[0]["Mobile_No"].ToString();
+        //            lblFDOB.Content = dt.Rows[0]["Date_Of_Birth"].ToString();
+        //            lblFLeadSource.Content = dt.Rows[0]["SourceOfEnquiry"].ToString();
+        //            lblFAnulRevenu.Content = dt.Rows[0]["AnnualRevenue"].ToString();
+        //            lblFEmail.Content = dt.Rows[0]["Email_ID"].ToString();
+        //            lblFFax.Content = dt.Rows[0]["FaxNo"].ToString();
+        //            lblFWebsite.Content = dt.Rows[0]["Website"].ToString();
+        //            lblFOccupation.Content = dt.Rows[0]["Occupation"].ToString();
+        //            //address information
+        //            lblFStreet.Content = dt.Rows[0]["Street"].ToString();
+        //            lblFCity.Content = dt.Rows[0]["City"].ToString();
+        //            lblFState.Content = dt.Rows[0]["State"].ToString();
+        //            lblFCountry.Content = dt.Rows[0]["Country"].ToString();
+        //            lblFZipCode.Content = dt.Rows[0]["ZipNo"].ToString();
+        //            //description
+        //            lblFDesctiption.Content = dt.Rows[0]["Description"].ToString();
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+        //    finally
+        //    {
+        //        con.Close();
+        //    }
+        //    btnAdm_Emp_Save.Content = "Update";
+        //}
+
+
+        
+    }
+
 }
